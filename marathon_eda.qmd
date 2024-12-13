@@ -193,6 +193,8 @@ library(ggpubr)
 
 source("~/GitHub/marathon_project/_helpers.R")
 
+setwd("~/GitHub/marathon_project/")
+
 ```
 
 
@@ -1294,94 +1296,44 @@ Note: "vspace" below reduces space between figures.
 :::
 \vspace{-2mm} 
 
-```{r performance v weather, fig.cap="Performance vs. Weather by Sex", echo = F, eval = T, fig.height=1.5, fig.width=7.5}
+```{r performance v weather, fig.cap="Performance vs. Weather by Sex", echo = F, eval = T, fig.height=4, fig.width=7.5}
 #| label: fig-env
 
-# Plotting Performance vs. WBGT 
-g1 <- ggplot(data_norm, aes(x = WBGT, y = norm_diff, color = Sex)) +
-  geom_point(alpha = 0, shape = 21, show.legend = F) +
-  geom_smooth(aes(group = Sex), 
-              method = "loess", 
+env_vars_long <- data_norm %>%
+  select(Sex, norm_diff, WBGT, `% RH`, `SR W/m2`, Wind, AQI) %>%
+  pivot_longer(
+    cols = c(WBGT, `% RH`, `SR W/m2`, Wind, AQI),
+    names_to = "Variable",
+    values_to = "Value"
+  )
+
+ggplot(env_vars_long, aes(x = Value, y = norm_diff, color = Sex)) +
+  geom_point(alpha = .16, shape = 21, show.legend = TRUE) +
+  geom_smooth(aes(group = Sex),
+              method = "loess",
               se = FALSE,
-              color = "black", 
+              color = "black",
               linewidth = 1.2) +
-  geom_smooth(aes(fill = Sex), 
-              method = "loess", 
+  geom_smooth(aes(fill = Sex),
+              method = "loess",
               se = TRUE,
               linewidth = 0.8,
-              alpha = 0.8) + 
-  labs(x = "WBGT",
-       y = "ND % CR",
+              alpha = 0.8) +
+  facet_wrap(~ Variable, scales = "free_x", ncol = 5) +
+  labs(x = "Environmental Variable Value",
+       y = "Normalized Difference in % CR",
        color = "Sex") +
   theme_minimal() +
   scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
   guides(color = guide_legend(override.aes = list(linewidth = 1.5))) +
-  theme(legend.position = "none") + ylim (0,10)
-
-# Plotting Performance vs. % RH 
-g2 <- ggplot(data, aes(x = `% RH`, y = `% CR`, color = Sex)) +
-  geom_point(alpha = .16, shape = 21, show.legend = F) +
-  geom_smooth(data = data, aes(group = Sex), method = "loess", se = F, 
-              color = "black", linewidth = 1.2) +
-  geom_smooth(data = data, aes(color = Sex), method = "loess", se = F, 
-              linewidth = .8, show.legend = TRUE) +
-  labs(x = "% RH",
-       y = "",
-       color = "Sex") +
-  theme_minimal() +
-  scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
-  guides(color = guide_legend(override.aes = list(linewidth = 1.5))) +
-  theme(legend.position = "none")
-
-# Plotting Performance vs. SR W/m2 
-g3 <- ggplot(data, aes(x = `SR W/m2`, y = `% CR`, color = Sex)) +
-  geom_point(alpha = .16, shape = 21, show.legend = F) +
-  geom_smooth(data = data, aes(group = Sex), method = "loess", se = F, 
-              color = "black", linewidth = 1.2) +
-  geom_smooth(data = data, aes(color = Sex), method = "loess", se = F, 
-              linewidth = .8, show.legend = TRUE) +
-  labs(x = "SR W/m2",
-       y = "",
-       color = "Sex") +
-  theme_minimal() +
-  scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
-  guides(color = guide_legend(override.aes = list(linewidth = 1.5))) +
-  theme(legend.position = "none")
-
-# Plotting Performance vs. Wind
-g4 <- ggplot(data, aes(x = `Wind`, y = `% CR`, color = Sex)) +
-  geom_point(alpha = .16, shape = 21, show.legend = F) +
-  geom_smooth(data = data, aes(group = Sex), method = "loess", se = F, 
-              color = "black", linewidth = 1.2) +
-  geom_smooth(data = data, aes(color = Sex), method = "loess", se = F, 
-              linewidth = .8, show.legend = TRUE) +
-  labs(x = "Wind",
-       y = "",
-       color = "Sex") +
-  theme_minimal() +
-  scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
-  guides(color = guide_legend(override.aes = list(linewidth = 1.5))) +
-  theme(legend.position = "none")
+  theme(
+    strip.text = element_text(size = 8),
+    axis.text = element_text(size = 7),
+    legend.position = "bottom",
+    panel.spacing = unit(1, "lines") 
+  ) + ylim (-5,30)
 
 
-# Plotting Performance vs. AQI
-g5 <- ggplot(data, aes(x = `AQI`, y = `% CR`, color = Sex)) +
-  geom_point(alpha = .16, shape = 21, show.legend = F) +
-  geom_smooth(data = data, aes(group = Sex), method = "loess", se = F, 
-              color = "black", linewidth = 1.2) +
-  geom_smooth(data = data, aes(color = Sex), method = "loess", se = F, 
-              linewidth = .8, show.legend = TRUE) +
-  labs(x = "AQI",
-       y = "",
-       color = "Sex") +
-  theme_minimal() +
-  scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
-  guides(color = guide_legend(override.aes = list(linewidth = 1.5))) +
-  theme(legend.position = "none")
-
-
-ggarrange(g1, g2, g3, g4, g5, ncol=5, nrow=1,
-          common.legend = T)
 ```
 
 
@@ -1425,12 +1377,19 @@ aim2m2 <- lmer(Time ~ CR + Year + Sex + Age + I(Age^2) + Sex * Age + Sex * I(Age
 ### Aim 3: Identify the Weather Parameters that Have the Largest Impact on Marathon Performance
 
 
-```{r aim 3: permute}
+```{r aim 3: permute, eval = F}
 # Run permutation importance
 imp <- variable_importance_reg(aim2m2, data, "Time", n_iterations = 100)
 
 ```
 
+```{r save permute, eval = F}
+saveRDS(imp, "imp.rds")
+```
+
+```{r load permute}
+imp <- readRDS("imp.rds")
+```
 
 
 ```{r, echo=F, eval=F}
