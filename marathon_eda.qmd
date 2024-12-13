@@ -126,12 +126,14 @@ Turning to aggregation, data extracted from the AQS retrieves the four parameter
 
 :::{.content-hidden}
 *TODO*
-[] Alter AQI handling as noted in paragraph above, do not aggregate all variables. Instead, aggregate the two PM2.5 variables and subsequently use AQI-PM2.5, AQI-PM10, and AQI-Ozone in analysis
-[] We may want to cite this as to why it is valid to combine the two PM2.5 measures: https://www.epa.gov/aqs/aqs-memos-technical-note-reporting-pm25-continuous-monitoring-and-speciation-data-air-quality
-[] Fix code to reflect new handling of AQI variables
+[] Alter AQI handling as noted in paragraph above. We add to the inital AQI dataset three new variables, carbon monoxide (CO), nitrogen dioxide (NO2), and sulfer dioxide (SO2)
+[x] Fix code to reflect new handling of AQI variables
+[] For updated aggregation cite AQI formula as the reason we grab the new parameters: https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf
 
 ***Reflection***
 Different types of pollutants have different biological effects, so it is inaccurate to average across all types of air pollution. We do still aggregate the two PM2.5 AQI measures, but all other are left separate. Averaging all four together could obfuscate the effect of a single component, if that single competent does have a significant impact but the others do not. 
+
+When we separated out the AQI variables into their respective component parts we noticed an issue: there is a great deal of missing data for specific AQI variables for a given marathon event in a given year. This was not an issue in the previous strategy because there is at least one AQI value available for each race in each year. Therefore rather than split out the separate AQI variables, we opt to aggregate more AQI variables. 
 :::
 
 
@@ -202,7 +204,7 @@ setwd("~/GitHub/marathon_project/")
 
 # Read in data
 marathon_data <- read.csv("~/GitHub/marathon_project/data/project1.csv")
-aqi_values <- read.csv("~/GitHub/marathon_project/data/aqi_values_ext.csv")
+aqi_values <- read.csv("~/GitHub/marathon_project/data/aqi_values2.csv")
 marathon_dates <- read.csv("~/GitHub/marathon_project/data/marathon_dates.csv")
 course_record <- read.csv("~/GitHub/marathon_project/data/course_record.csv")
 
@@ -268,6 +270,15 @@ Course records are merged with the core provided dataset. Actual race times are 
 
 ```{r clean aqi}
 
+# AQI parameters
+# 88101 = PM2.5 - Local Conditions
+# 81102 = PM10 Total 0-10um STP
+# 88502 = Acceptable PM2.5 AQI & Speciation Mass
+# 44201 = Ozone
+# 42101 = CO 
+# 42602 = NO2
+# 42401 = SO2 
+
 # Clean and prep AQI dataset
 aqi_values <- aqi_values %>%
   group_by(date_local, marathon) %>%
@@ -299,8 +310,6 @@ aqi_values <- aqi_values %>%
     marathon == "Grandmas" ~ "Grandma's Marathon (Duluth, MN)",
     TRUE ~ marathon)
   )
-
-
 
 ```
 
