@@ -856,12 +856,12 @@ Careful terminology must be used when dealing with a hierarchical dataset becaus
 :::
 
 
-```{r table 1}
-#| label: tbl-1
+```{r table 1a}
+#| label: tbl-1a
 #| tbl-cap: "Summary of Performance Variables" 
 # Note: using tbl-cap rather than caption= in kbl() breaks repeated title is span page
 
-# Table 1
+# Table 1a
 summary_table(data[-7:-20]) %>%
   kbl(#caption = "Summary of Variables", # Conflicts with Quarto referencing
       booktabs = T,
@@ -891,7 +891,50 @@ summary_table(data[-7:-20]) %>%
 
 ```
 
+```{r table 1b}
+# Table 1b
+ 
+data_by_race <- data %>%
+  group_by(Race, Year) %>%
+  summarise(
+    Flag = if_else(n_distinct(Flag) == 1, unique(Flag), NA_character_),
+    WBGT = if_else(n_distinct(WBGT) == 1, unique(WBGT), NA_real_),
+    `% RH` = if_else(n_distinct(`% RH`) == 1, unique(`% RH`), NA_real_),
+    `SR W/m2` = if_else(n_distinct(`SR W/m2`) == 1, unique(`SR W/m2`), NA_real_),
+    Wind = if_else(n_distinct(Wind) == 1, unique(Wind), NA_real_),
+    AQI = if_else(n_distinct(AQI) == 1, unique(AQI), NA_real_)
+  ) %>%
+  ungroup()
+ 
+summary_table(data_by_race[-2]) %>%
+  kbl(#caption = "Summary of Variables", # Conflicts with Quarto referencing
+      booktabs = T,
+      longtable = T, # LONGTABLE
+      escape = T,
+      align = "c") %>%
+  column_spec(1, width="2.2cm", latex_valign = "m") %>%
+  column_spec(2, width="1.0cm", latex_valign = "m") %>%
+  column_spec(3, width="6.67cm", latex_valign = "m") %>%
+  column_spec(4, width="1.0cm", latex_valign = "m") %>%
+  column_spec(5, width="1.0cm", latex_valign = "m") %>%
+  column_spec(6, width="1.25cm", latex_valign = "m") %>%
+  column_spec(7, width="1.25cm", latex_valign = "m") %>%
+  kable_styling(
+    font_size = 7.6, # Added for LONGTABLE
+    latex_options = c(#'HOLD_position', # Removed for LONGTABLE
+    #'scale_down', # Removed for LONGTABLE
+    "repeat_header",  # Added for LONGTABLE
+    'striped'), 
+    full_width = F, # Note: TRUE does not work with LONGTABLE
+    position = 'center'# Added for LONGTABLE
+  ) %>%
+  footnote(general = "Shapiro-Wilk test for normality;
+             Grubb's test for outliers.", escape = F)
 
+
+
+
+```
 
 ```{r q-q plots, echo=F, eval=F}
 # NOTE: This cell is not evaluated or printed in the report, but commentary on 
@@ -925,12 +968,12 @@ Grandma's Marathon, the only race in the summer, had significantly worse `Flag` 
 
 
 
-```{r table 2}
-#| label: tbl-2
+```{r table 2a}
+#| label: tbl-2a
 #| tbl-cap: "Summary of Variables by Race"
 
-# Table 2
-summary_table(data[,c(-5,-17:-20)], stratify_var = "Race") %>%
+# Table 2a
+summary_table(data[,c(-5,-7:-20)], stratify_var = "Race") %>%
   kbl(#caption = "Summary of Variables by Race", # Conflicts with Quarto label
       booktabs = T,
       longtable = T, # LONGTABLE
@@ -963,6 +1006,49 @@ summary_table(data[,c(-5,-17:-20)], stratify_var = "Race") %>%
            Bonferroni correction applied.", escape = F) 
 
 ```
+
+
+
+```{r table 2b}
+#| label: tbl-2b
+#| tbl-cap: "Summary of Variables by Race"
+
+# Table 2b
+summary_table(data_by_race[-2], stratify_var = "Race") %>%
+  kbl(#caption = "Summary of Variables by Race", # Conflicts with Quarto label
+      booktabs = T,
+      longtable = T, # LONGTABLE
+      escape = T,
+      align = "c") %>% 
+  column_spec(1, width="2.21cm", latex_valign = "m") %>%
+  column_spec(2, width="2.4cm", latex_valign = "m") %>%
+  column_spec(3, width="2.4cm", latex_valign = "m") %>%
+  column_spec(4, width="2.4cm", latex_valign = "m") %>%
+  column_spec(5, width="2.4cm", latex_valign = "m") %>%  
+  column_spec(6, width="2.4cm", latex_valign = "m") %>%
+  column_spec(7, width=".35cm", latex_valign = "m") %>%
+  kable_styling(
+    font_size = 7.6, # Added for LONGTABLE
+    latex_options = c(#'HOLD_position', # Removed for LONGTABLE
+    #'scale_down', # Removed for LONGTABLE
+    "repeat_header",  # Added for LONGTABLE
+    'striped'), 
+    full_width = F, # Note: TRUE does not work with LONGTABLE
+    position = 'center'# Added for LONGTABLE
+  ) %>%
+  footnote(general = "ns = P > 0.05,
+           * = P $\\\\leq$ 0.05,
+           ** = P $\\\\leq$ 0.01,
+           *** = P $\\\\leq$ 0.001,
+           **** = P $\\\\leq$ 0.0001
+           ", escape = F) %>%
+  footnote(general = "Kruskal–Wallis test for continuous variables,
+           Chi-Square test for categorical variables. 
+           Bonferroni correction applied.", escape = F) 
+
+```
+
+
 
 We next examine variables by levels of `Sex` (table omitted for space). Student's T-test was used for continuous variables and the Chi-Square test was used for categorical variables. No Bonferroni correction was applied because there are only two groups. There were no statistically significant differences across variables by `Sex`, with the exception of `Age`. Men were statistically significantly older, with a mean `Age` of 47.8 years compared to a mean `Age` of 45.0 years for women.
 
@@ -1244,12 +1330,88 @@ We conduct preliminary linear mixed effects regression modeling to aid in answer
 
 Specific coefficient interpretations, model diagnostics, interaction plots, and predicted value plots are omitted as outside of scope for this report. Future work should address this weakness. General interpretation of the results is as follows: our model indicates that performance follows a U-shaped curve with age for both sexes; the curve is more pronounced for women. Women reach peak performance slightly earlier (around 35.4 years) compared to men (37.1 years). As in Dr. Ely's preliminary modeling, this is an overestimate of the age of peak performance likely caused by the inflexibility of the linear model. As runners age beyond their peak, women's performance declines more rapidly than men's. Specifically, women's times increase by about 7.06 seconds per year squared, while men's increase by 6.22 seconds per year squared. This results in a widening performance gap between sexes in older age groups, despite women showing faster improvement rates in younger ages.
 
+\btwocol
+
+```{r}
+
+library(broom.mixed)
+
+fixed_effects <- tidy(aim1m1, effects = "fixed")
+
+random_effects <- tidy(aim1m1, effects = "ran_pars")
+
+fixed_effects %>% 
+  dplyr::select (-c(effect, std.error, statistic, df)) %>% 
+  filter(!(term %in% c("(Intercept)"))) %>%
+  kbl(
+  digits = 3,
+  caption = "Fixed Effects of Mixed-Effects Model for Aim 1",
+  booktabs = TRUE)
+
+
+```
+
+```{r, eval = F}
+kable(
+  random_effects,
+  digits = 3,
+  caption = "Random Effects of Mixed-Effects Model for Aim 1",
+  booktabs = TRUE
+)
 
 
 
+```
 
 
 
+```{r}
+
+ages <- seq(min(data$Age, na.rm = TRUE), max(data$Age, na.rm = TRUE), length.out = 100)
+
+new_data <- expand.grid(
+  Age = ages,
+  Sex = c("Female", "Male"),
+  CR = mean(data$CR, na.rm = TRUE),
+  Year = mean(data$Year, na.rm = TRUE),
+  Race = unique(data$Race)[1]  
+)
+
+new_data$I_Age2 <- new_data$Age^2
+
+new_data$Predicted <- predict(aim1m1, newdata = new_data, re.form = NA)
+
+peak_age_women <- -fixef(aim1m1)["Age"] / (2 * fixef(aim1m1)["I(Age^2)"])
+peak_age_men <- -(fixef(aim1m1)["Age"] + fixef(aim1m1)["SexMale:Age"]) / 
+  (2 * (fixef(aim1m1)["I(Age^2)"] + fixef(aim1m1)["SexMale:I(Age^2)"]))
+
+
+peak_points <- data.frame(
+  Age = c(peak_age_women, peak_age_men),
+  Predicted = predict(aim1m1, newdata = data.frame(
+    Age = c(peak_age_women, peak_age_men),
+    Sex = c("Female", "Male"),
+    CR = mean(data$CR, na.rm = TRUE),
+    Year = mean(data$Year, na.rm = TRUE),
+    Race = unique(data$Race)[1],
+    I_Age2 = c(peak_age_women^2, peak_age_men^2)
+  ), re.form = NA),
+  Sex = c("Female", "Male")
+)
+
+ggplot(new_data, aes(x = Age, y = Predicted, color = Sex)) +
+  geom_line(size = 1) +
+  geom_point(data = peak_points, aes(x = Age, y = Predicted),
+             size = 3, shape = 21, fill = "white") +
+  labs(
+    title = "Predicted Running Times by Age and Sex with Peak Performance",
+    x = "Age",
+    y = "Predicted Time (seconds)"
+  ) +
+  theme_minimal()
+```
+
+\etwocol
 
 ### Aim 2: Explore the Impact of Environmental Conditions on Marathon Performance, and Whether the Impact Differs Across Age and Gender
 
@@ -1340,14 +1502,6 @@ ggplot(env_vars_long, aes(x = Value, y = norm_diff, color = Sex)) +
 
 Scatter plots were created to compare `% CR` against environmental variables. We see that there are very weak relationships between the environmental variables and `% CR` ([-@fig-env]), if any is present at all. We observe weak correlations betwen weather variables and performance [@fig-corr]. An additional plot of `% CR` by `Age` stratified by `Flag` is generated ([-@fig-flag]). We note that this plot indicates a possible weak relationship between performance and `Flag` (and therefore likley a relationship between performance and `WBGT`).
 
-As above, we conduct preliminary linear mixed effects regression modeling to aid in answering this aim. We produce two models, one with interactions between environmental variables and `Age` as well as between environmental variable and `Sex`, and one without. Specific coefficient interpretations, model diagnostics, interaction plots, and predicted value plots are omitted as outside of scope for this report; future work should address this weakness. General interpretation of the results is as follows. For the model without interactions, we found that environmental conditions significantly impact marathon performance. Higher `WBGT` and stronger `Wind` slow runners down (32.34 seconds per `WBGT` unit and 11.36 seconds per `Wind` unit, respectively). Surprisingly, higher humidity is associated with slightly faster times (-4.49 seconds per 1% increase in `% RH`); we note that the relationship between `% RH` and performance is likely U-shaped. Solar radiation and air quality show minimal or non-significant effects. This model doesn't account for how these impacts might vary by age or gender.
-
-To produce the second model, we add interaction terms for all environmental variables with both `Age` and `Sex`. Environmental impacts on marathon performance differ across `Age` and `Sex`. `WBGT` has a more pronounced effect on women and older runners (0.61 seconds more per year of `Age` per `WBGT` unit). Men are less affected by `WBGT` but more susceptible to poor air quality. Higher humidity benefits older runners more (-0.14 seconds per year of `Age` per 1% increase in `% RH`). `Wind` slows all runners equally (24.62 seconds per unit), regardless of age or gender.
-
-
-
-
-
 
 
 
@@ -1370,6 +1524,179 @@ aim2m2 <- lmer(Time ~ CR + Year + Sex + Age + I(Age^2) + Sex * Age + Sex * I(Age
 
 ```
 
+As above, we conduct preliminary linear mixed effects regression modeling to aid in answering this aim. We produce two models, one with interactions between environmental variables and `Age` as well as between environmental variable and `Sex`, and one without. Specific coefficient interpretations, model diagnostics, interaction plots, and predicted value plots are omitted as outside of scope for this report; future work should address this weakness. General interpretation of the results is as follows. For the model without interactions, we found that environmental conditions significantly impact marathon performance. Higher `WBGT` and stronger `Wind` slow runners down (32.34 seconds per `WBGT` unit and 11.36 seconds per `Wind` unit, respectively). Surprisingly, higher humidity is associated with slightly faster times (-4.49 seconds per 1% increase in `% RH`); we note that the relationship between `% RH` and performance is likely U-shaped. Solar radiation and air quality show minimal or non-significant effects. This model doesn't account for how these impacts might vary by age or gender.
+
+To produce the second model, we add interaction terms for all environmental variables with both `Age` and `Sex`. Environmental impacts on marathon performance differ across `Age` and `Sex`. `WBGT` has a more pronounced effect on women and older runners (0.61 seconds more per year of `Age` per `WBGT` unit). Men are less affected by `WBGT` but more susceptible to poor air quality. Higher humidity benefits older runners more (-0.14 seconds per year of `Age` per 1% increase in `% RH`). `Wind` slows all runners equally (24.62 seconds per unit), regardless of age or gender.
+
+
+
+
+\btwocol
+
+
+```{r fixed effs model 1 aim 2}
+
+fixed_effects <- tidy(aim2m1, effects = "fixed")
+
+random_effects <- tidy(aim2m1, effects = "ran_pars")
+
+fixed_effects %>% 
+  dplyr::select (-c(effect, std.error, statistic, df)) %>% 
+  filter(!(term %in% c("(Intercept)"))) %>%
+  filter(p.value < 0.05) %>%
+  kbl(
+  digits = 3,
+  caption = "Significant Fixed Effects of Mixed-Effects Model for Aim 2",
+  booktabs = TRUE
+)
+
+
+```
+
+```{r rand effs model 1 aim 2, eval = F}
+kable(
+  random_effects,
+  digits = 3,
+  caption = "Random Effects of Mixed-Effects Model for Aim 2",
+  booktabs = TRUE
+)
+
+
+
+```
+
+
+
+```{r fixed effs model 2 aim 2}
+
+fixed_effects <- tidy(aim2m2, effects = "fixed")
+
+random_effects <- tidy(aim2m2, effects = "ran_pars")
+
+fixed_effects %>% 
+  dplyr::select (-c(effect, std.error, statistic, df)) %>% 
+  filter(!(term %in% c("(Intercept)"))) %>%
+  filter(p.value < 0.05) %>%
+  kbl(
+  digits = 3,
+  caption = "Significant Fixed Effects of Model for Aim 2",
+  booktabs = TRUE
+)
+
+
+```
+
+```{r rand eff aim 2 model 2, eval = F}
+kable(
+  random_effects,
+  digits = 3,
+  caption = "Random Effects of Mixed-Effects Model for Aim 2",
+  booktabs = TRUE
+)
+
+
+
+```
+
+
+\etwocol
+
+```{r plots for aim 2 models, eval = F}
+# Not used in this version
+
+mean_CR <- mean(data$CR, na.rm = TRUE)
+mean_Year <- mean(data$Year, na.rm = TRUE)
+mean_Age <- mean(data$Age, na.rm = TRUE)
+mean_Age2 <- mean_Age^2
+mean_RH <- mean(data$`% RH`, na.rm=TRUE)
+mean_SR <- mean(data$`SR W/m2`, na.rm=TRUE)
+mean_Wind <- mean(data$Wind, na.rm=TRUE)
+mean_AQI <- mean(data$AQI, na.rm=TRUE)
+
+
+# Model 1 (no interaction) Plots
+
+# WBGT Plot
+wbgt_range <- seq(min(data$WBGT, na.rm=TRUE), max(data$WBGT, na.rm=TRUE), length.out = 100)
+pred_data_m1_wbgt <- data.frame(
+  CR = mean_CR,
+  Year = mean_Year,
+  Sex = factor("Female", levels = levels(data$Sex)), # Choose "Female" or "Male"
+  Age = mean_Age,
+  `I(Age^2)` = mean_Age2,
+  `WBGT` = wbgt_range,
+  `% RH` = mean_RH,
+  `SR W/m2` = mean_SR,
+  `Wind` = mean_Wind,
+  `AQI` = mean_AQI
+, check.names = FALSE) 
+
+
+pred_data_m1_wbgt$Time_hat <- predict(aim2m1, newdata = pred_data_m1_wbgt, re.form = NA)
+
+ggplot(pred_data_m1_wbgt, aes(x = WBGT, y = Time_hat)) +
+  geom_line(color = "blue") +
+  labs(title = "Predicted Marathon Time vs. WBGT (Model 1)",
+       x = "WBGT",
+       y = "Predicted Marathon Time (seconds)") +
+  theme_minimal()
+
+
+# Model 2 (with interactions) Plots
+
+age_values <- c(30, 40, 50)
+sex_values <- levels(data$Sex) 
+
+pred_data_m2_wbgt <- expand.grid(
+  CR = mean_CR,
+  Year = mean_Year,
+  Sex = sex_values,
+  Age = age_values,
+  `I(Age^2)` = mean_Age2,
+  `WBGT` = wbgt_range,
+  `% RH` = mean_RH,
+  `SR W/m2` = mean_SR,
+  `Wind` = mean_Wind,
+  `AQI` = mean_AQI
+, check.names = FALSE)  
+
+
+pred_data_m2_wbgt$Time_hat <- predict(aim2m2, newdata = pred_data_m2_wbgt, re.form = NA)
+
+ggplot(pred_data_m2_wbgt, aes(x = WBGT, y = Time_hat, color = Sex, linetype = factor(Age))) +
+  geom_line(size = 1) +
+  labs(title = "Predicted Marathon Time vs. WBGT by Sex and Age (Model 2)",
+       x = "WBGT",
+       y = "Predicted Marathon Time (seconds)",
+       linetype = "Age",
+       color = "Sex") +
+  theme_minimal()
+
+rh_range <- seq(min(data$`% RH`, na.rm=TRUE), max(data$`% RH`, na.rm=TRUE), length.out=100)
+pred_data_m2_rh <- expand.grid(
+  CR = mean_CR,
+  Year = mean_Year,
+  Sex = sex_values,
+  Age = age_values,
+  `I(Age^2)` = age_values^2,
+  `WBGT` = mean(data$WBGT, na.rm=TRUE),
+  `% RH` = rh_range,
+  `SR W/m2` = mean_SR,
+  `Wind` = mean_Wind,
+  `AQI` = mean_AQI
+)
+
+pred_data_m2_rh$Time_hat <- predict(aim2m2, newdata = pred_data_m2_rh, re.form = NA)
+
+ggplot(pred_data_m2_rh, aes(x = `% RH`, y = Time_hat, color = Sex, linetype = factor(Age))) +
+  geom_line(size = 1) +
+  labs(title = "Predicted Marathon Time vs. % RH by Sex and Age (Model 2)",
+       x = "% RH",
+       y = "Predicted Marathon Time (seconds)",
+       linetype = "Age",
+       color = "Sex") +
+  theme_minimal()
+```
 
 
 
