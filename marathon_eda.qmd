@@ -1,6 +1,6 @@
 ---
 title: \small \vspace{-1cm} Examining the Relationship Between Environmental Conditions and Marathon Performance in Male and Female Runners of Different Ages
-author: \small \vspace{-1cm} Thomas. B Arnold
+author: \vspace{-1cm} \small Thomas. B Arnold
 #date: today
 #date-format: long
 format:
@@ -167,6 +167,7 @@ Checks for consistency are conducted. Because variables are not properly named a
 #   car 3.1-2
 #   lme4 1.1-34
 #   ggpubr 0.6.0
+#   broom.mixed 0.2.9.4
 
 # Knitr Engine Setup
 knitr::opts_chunk$set(message=F, 
@@ -188,9 +189,8 @@ library(car) # For qqPlot(), vif()
 library(lme4)
 library(lmerTest) # Satterthwaite approximation for computing p-values on lme4
 library(ggpubr)
+library(broom.mixed)
 
-#library(Hmisc)
-#library(vcd)
 
 
 source("~/GitHub/marathon_project/_helpers.R")
@@ -901,6 +901,9 @@ summary_table(data[-7:-20]) %>%
 ```
 
 ```{r table 1b}
+#| label: tbl-1b
+#| tbl-cap: "Summary of Race-level Variables" 
+
 # Table 1b
  
 data_by_race <- data %>%
@@ -979,7 +982,7 @@ Grandma's Marathon, the only race in the summer, had significantly worse `Flag` 
 
 ```{r table 2a}
 #| label: tbl-2a
-#| tbl-cap: "Summary of Variables by Race"
+#| tbl-cap: "Summary of Performance Variables by Race"
 
 # Table 2a
 summary_table(data[,c(-5,-7:-20)], stratify_var = "Race") %>%
@@ -1020,7 +1023,7 @@ summary_table(data[,c(-5,-7:-20)], stratify_var = "Race") %>%
 
 ```{r table 2b}
 #| label: tbl-2b
-#| tbl-cap: "Summary of Variables by Race"
+#| tbl-cap: "Summary of Racel-level Variables by Race"
 
 # Table 2b
 summary_table(data_by_race[-2], stratify_var = "Race") %>%
@@ -1343,7 +1346,6 @@ Specific coefficient interpretations, model diagnostics, interaction plots, and 
 
 ```{r}
 
-library(broom.mixed)
 
 fixed_effects <- tidy(aim1m1, effects = "fixed")
 
@@ -1354,7 +1356,7 @@ fixed_effects %>%
   filter(!(term %in% c("(Intercept)"))) %>%
   kbl(
   digits = 3,
-  caption = "Fixed Effects of Mixed-Effects Model for Aim 1",
+  caption = "Fixed Effects of Model for Aim 1",
   booktabs = TRUE)
 
 
@@ -1374,7 +1376,7 @@ kable(
 
 
 
-```{r}
+```{r, fig.cap="Predicted Times by Age and Sex", fig.height=3.5}
 
 ages <- seq(min(data$Age, na.rm = TRUE), max(data$Age, na.rm = TRUE), length.out = 100)
 
@@ -1412,12 +1414,12 @@ ggplot(new_data, aes(x = Age, y = Predicted, color = Sex)) +
   geom_line(size = 1) +
   geom_point(data = peak_points, aes(x = Age, y = Predicted),
              size = 3, shape = 21, fill = "white") +
+  scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
   labs(
-    title = "Predicted Running Times by Age and Sex with Peak Performance",
     x = "Age",
     y = "Predicted Time (seconds)"
   ) +
-  theme_minimal()
+  theme_minimal() + theme(legend.position = "left")
 ```
 
 \etwocol
@@ -1491,7 +1493,8 @@ ggplot(env_vars_long, aes(x = Value, y = norm_diff, color = Sex)) +
               linewidth = 0.8,
               alpha = 0.8) +
   facet_wrap(~ Variable, scales = "free_x", ncol = 5) +
-  labs(y = "Normalized Difference in % CR",
+  labs(y = "Normalized Diff. in % CR",
+       x = "",
        color = "Sex") +
   theme_minimal() +
   scale_color_manual(values = c("Female" = "lightpink2", "Male" = "lightblue2")) +
@@ -1499,7 +1502,7 @@ ggplot(env_vars_long, aes(x = Value, y = norm_diff, color = Sex)) +
   theme(
     strip.text = element_text(size = 8),
     axis.text = element_text(size = 7),
-    legend.position = "bottom",
+    legend.position = "top",
     panel.spacing = unit(1, "lines") 
   ) + ylim (-4,28)
 
@@ -1555,7 +1558,7 @@ fixed_effects %>%
   filter(p.value < 0.05) %>%
   kbl(
   digits = 3,
-  caption = "Significant Fixed Effects of Mixed-Effects Model for Aim 2",
+  caption = "Significant Fixed Effects of Main Effects Model for Aim 2",
   booktabs = TRUE
 )
 
@@ -1588,7 +1591,7 @@ fixed_effects %>%
   filter(p.value < 0.05) %>%
   kbl(
   digits = 3,
-  caption = "Significant Fixed Effects of Model for Aim 2",
+  caption = "Significant Fixed Effects of Environmental Interaction Model for Aim 2",
   booktabs = TRUE
 )
 
