@@ -145,7 +145,7 @@ Additional limitations applicable to both the air quality data and Dr. Ely’s e
 
 ### 2.1 Import, Initial Inspection, & Merging Datasets
 
-Checks for consistency are conducted. Because variables are not properly named and labeled by default, recoding is conducted using the codebook. We ensure that `Race`, `Sex`, and `Flag` are correctly coded according to the code sheet. Categorical variables are converted to factors with labels. Course records are merged with the core provided dataset. Actual race times are computed using `% CR` and course record times. Marathon dates and course record datasets are merged on keys `Race`, `Year`, `Date`, `Sex`. As discussed above, `AQI` are aggregated across CBSA, the day of the marathon, and the pollution parameters to create one `AQI` value for a given marathon day. `AQI` readings are merged to marathon dates and locations. Dates are also merged to help with merging of `AQI`. For data verification, the number of observations before and after merging are checked to ensure no data loss. Spot checks are performed to confirm accurate merges. We verify that there are the same number of records for each race in our final merge dataset as in the original provided dataset and that no duplicate rows exist. Finally, we spot check the dataset to ensure that newly added variables appear as expected in association with their counterparts.
+Checks for consistency are conducted. Because variables are not properly named and labeled by default, recoding is conducted using the codebook. We ensure that `Race`, `Sex`, and `Flag` are correctly coded according to the code sheet. Categorical variables are converted to factors with labels. Course records are merged with the core provided dataset. Actual race times are computed using `% CR` and course record times. Normalized difference in % CR is also produced by normalizing relative to the mean `% CR` at a given age (note that this variable is omitted from summary tables as we use it primarily for plotting). Marathon dates and course record datasets are merged on keys `Race`, `Year`, `Date`, `Sex`. As discussed above, `AQI` are aggregated across CBSA, the day of the marathon, and the pollution parameters to create one `AQI` value for a given marathon day. `AQI` readings are merged to marathon dates and locations. Dates are also merged to help with merging of `AQI`. For data verification, the number of observations before and after merging are checked to ensure no data loss. Spot checks are performed to confirm accurate merges. We verify that there are the same number of records for each race in our final merge dataset as in the original provided dataset and that no duplicate rows exist. Finally, we spot check the dataset to ensure that newly added variables appear as expected in association with their counterparts.
 
 
 
@@ -1113,6 +1113,7 @@ summary_table(data[,c(-4,-17:-20)], stratify_var = "Age Group") %>%
 
 ### 3.2 Correlation & Multicollinearity Analysis
 
+As might be expected, `WBGT` and the variables that are used to compute it are highly correlated. `WBGT` and the dew point measurement `DP` are also highly correlated; this is likely because `Tw, C`, the wet-bulb temperature, factors in humidity, of which dew point is a measure. Interestingly, `WBGT` is not highly correlated with `% RH`, despite relative humidity being a measurement of the moisture in the air, nor with `SR W/m2`, despite the solar radiation being included within `Tg, C`, itself a factor in `WBGT`. `Wind` is positively correlated with `Flag` but negatively correlated with all temperature and humidity variables. Although `Flag` is based on `WBGT`, it also appears to take into account wind conditions in a manner that is not immediately clear; this is a potential area of refinement in future study. Finally, as discussed above and shown in various tables, `Race` is moderately correlated with all environmental variables, which is a potential limitation in our study, because the races are conducted under different environmental conditions. 
 
 
 ```{r corr mat, fig.cap = "Correlation Matrix", fig.width=6.3}
@@ -1170,7 +1171,6 @@ data <- data %>%
 
 ```
 
-As might be expected, `WBGT` and the variables that are used to compute it are highly correlated. `WBGT` and the dew point measurement `DP` are also highly correlated; this is likely because `Tw, C`, the wet-bulb temperature, factors in humidity, of which dew point is a measure. Interestingly, `WBGT` is not highly correlated with `% RH`, despite relative humidity being a measurement of the moisture in the air, nor with `SR W/m2`, despite the solar radiation being included within `Tg, C`, itself a factor in `WBGT`. `Wind` is positively correlated with `Flag` but negatively correlated with all temperature and humidity variables. Although `Flag` is based on `WBGT`, it also appears to take into account wind conditions in a manner that is not immediately clear; this is a potential area of refinement in future study. Finally, as discussed above and shown in various tables, `Race` is moderately correlated with all environmental variables, which is a potential limitation in our study, because the races are conducted under different environmental conditions. 
 
 Variance inflation factor (VIF) is calculated for all variables. Initial checks for multicollinearity indicate perfect collinearity between some variables. Based on @fig-corr, we see that these variables are likely to be the temperature variables and `DP`. We remove all variables which are highly correlated with the main or primary hypothesized explanatory variable `WBGT` from the dataset. Removing these variables alleviates indicated collinearity issues in all potential future regression analysis. One exception is that we choose to retain the `Flag` variable for use in charting below. `Flag` is purportedly a straightforward quantization of `WBGT` similar to `Age Group` and `AQI Level`, and while these variables remain in the dataset, they will not be used in modeling intended to answer the aims.
 
@@ -1191,10 +1191,10 @@ We replaced prior charting which was difficult to read and interpret. The new ve
 
 :::
 
+A scatter plots of % CR vs. age, with different colors for sex, as well as scatter plots of normalized difference in % CR by sex for each race are included for interpretation. There is an evident U-shaped, curvilinear, relationship between age and % CR, which will inform modeling decisions (i.e., a polynomial term for age will be included in all models). Based on the visualizations, we see that the curvilinear relationship between age and performance is likely more pronounced for women than men, with women accelerating towards optimal finishing time faster as they approach optimal age, and decelerating faster as they age. It is also notable from the above that the gap between men and women appears to increase substantially around age 50, before gradually narrowing again as can been seen in the figures above. For correlations, we refer to the correlation matrix [@fig-corr] and note that for bivariate correlation, there is no correlation between sex and % CR (Correlation = 0.00). This is a consequence of marathon course records, and therefore `% CR`, being categorized separately for males and females. This does not preclude a more complex relationship between sex, age, and % CR, which we will explore below. We observe a strong correlation between age and % CR (Correlation = 0.70), which is supported by physiological theory. 
 
-::: {.content-hidden}
-Note: "vspace" below reduces space between paragraph and figures. 
-:::
+
+
 \vspace{-2mm} 
 
 \bunevencol
@@ -1325,7 +1325,6 @@ aim1m1 <- lmer(Time ~ CR + Year + Sex + Age + I(Age^2)
 ```
 
 
-A scatter plots of % CR vs. age, with different colors for sex, as well as scatter plots of normalized difference in % CR by sex for each race are included for interpretation. There is an evident U-shaped, curvilinear, relationship between age and % CR, which will inform modeling decisions (i.e., a polynomial term for age will be included in all models). Based on the visualizations, we see that the curvilinear relationship between age and performance is likely more pronounced for women than men, with women accelerating towards optimal finishing time faster as they approach optimal age, and decelerating faster as they age. It is also notable from the above that the gap between men and women appears to increase substantially around age 50, before gradually narrowing again as can been seen in the figures above. For correlations, we refer to the correlation matrix [@fig-corr] and note that for bivariate correlation, there is no correlation between sex and % CR (Correlation = 0.00). This is a consequence of marathon course records, and therefore `% CR`, being categorized separately for males and females. This does not preclude a more complex relationship between sex, age, and % CR, which we will explore below. We observe a strong correlation between age and % CR (Correlation = 0.70), which is supported by physiological theory. 
  
 We conduct preliminary linear mixed effects regression modeling to aid in answering this aim. Note that we use `Time` as our response variable rather than `% CR` because the latter is computed separately by gender, which could bias our results when including `Sex` and associated interaction terms in the model. To accurately model the complex relationship between gender and age we include quadratic terms for `Age` and both the linear interaction of `Sex` and `Age` as well as the interaction between `Sex` and quadratic `Age`. We include a random slope for `Race` and include as controls `CR` and `Year` to adjust for the differential difficulty between race courses and across years.
 
@@ -1413,7 +1412,15 @@ ggplot(new_data, aes(x = Age, y = Predicted, color = Sex)) +
 
 \etwocol
 
+\vspace{-2mm} 
 
+:::{.content-hidden}
+*TODO*
+[] Fix variable names below
+
+***Reflection***
+N/A
+:::
 
 General interpretation of the results is as follows: our model indicates that performance follows a U-shaped curve with age for both sexes, as evidenced by the significant positive quadratic term for Age (7.055, p<0.001). The curve is more pronounced for women, shown by the negative interaction between Sex:Male and Age^2 (-0.836, p<0.001). Women reach peak performance slightly earlier (around 35.4 years) compared to men (37.1 years). As in Dr. Ely's preliminary modeling, this is an overestimate of the age of peak performance likely caused by the inflexibility of the linear model. The base effect of age shows that women's performance improves rapidly in younger years (-499.767 seconds per year, p<0.001), while men's improvement is less dramatic (interaction term SexMale:Age shows 39.052 seconds slower improvement per year, p<0.001). As runners age beyond their peak, women's performance declines more rapidly than men's. Specifically, women's times increase by about 7.06 seconds per year squared, while men's increase by 6.22 seconds per year squared (difference due to the -0.836 Sex:Age^2 interaction). This results in a widening performance gap between sexes in older age groups, as clearly visible in Figure 4 where the curves diverge more substantially after age 50 (although our model is not able to replicate the stark divergence seen at age 50 between men and women observed above). The model also indicates a substantial baseline difference between sexes (SexMale coefficient -1453.512, p<0.001), though this main effect must be interpreted in conjunction with the interaction terms. There is a small but significant effect of year (-35.917, p<0.001), suggesting general performance improvements over time, and course record time (CR) has a positive relationship with finishing time (0.508, p=0.014), indicating that harder courses produce proportionally slower times across all ages and both sexes.
 
