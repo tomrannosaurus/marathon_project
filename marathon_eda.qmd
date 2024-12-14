@@ -28,12 +28,12 @@ Note: "vspace" (below) reduces space between title and first paragraph.
 
 
 :::{.content-hidden}
-*NOTE* **-- Overall**
+*NOTE* **-- Overall**                                                       
 - Exposition of results is good, don't reduce only add if necessary
 
 *TODO* **-- Overall**
 [x] Used a lot of space for data intro -- edit to have more space for main aims
-[] Relate observations in aim 1 to future aims (I think this is done, but check)
+[x] Relate observations in aim 1 to future aims (I think this is done, but check) 
 
 
 ***Reflection***
@@ -67,11 +67,11 @@ N/A
 
 ### 1.2 Data Sources & Collection Methods
 
-The dataset includes marathon results and environmental condition data for Boston, Chicago, New York, Twin Cities, and Grandma’s Marathons, run during periods of 17 to 24 years (1993-2016). Dr. Ely noted that the dataset ends in 2016 because advances in running shoe technology led to course records decreasing at an accelerated rate. The earliest years included in this dataset differ between cities (1993 for New York City, 1996 for Chicago, 1998 for Boston, and 2000 for Twin Cities and Grandma's). 
+The dataset includes marathon results and environmental condition data for Boston, Chicago, New York, Twin Cities, and Grandma’s Marathons, run during periods of 17 to 24 years (1993-2016)  [@ely2024presentation]. Dr. Ely noted that the dataset ends in 2016 because advances in running shoe technology led to course records decreasing at an accelerated rate. The earliest years included in this dataset differ between cities (1993 for New York City, 1996 for Chicago, 1998 for Boston, and 2000 for Twin Cities and Grandma's). 
 
 :::{.content-hidden}
 *TODO* 
-[] Cite Dr. Ely class presentation in paragraph above
+[x] Cite Dr. Ely class presentation in paragraph above
 
 ***Reflection***
 Proper citations are critical for trustworthy research.
@@ -79,7 +79,7 @@ Proper citations are critical for trustworthy research.
 
 The five races differ in some important respects reducing the comparability between samples, as reflected in the analysis in Section 3. Boston has higher qualification requirements than other marathons, such that fewer and different runners at the extremes of age are likely to compete. The Boston and Grandma's marathons are run at different times of year (April and June, respectively) than the other races (October to November). The courses also differ in elevation changes at different parts of the courses; New York, for example, has a large hill near the end of the course, which may affect runners differently based on their age or other factors. 
 
-The fastest finishing time at each age for male and female runners was compared with the course record time, measured as a percent of the course record for that runner’s sex (`% CR`). The original dataset did not provide runners' actual finish times, but only their `% CR`. Using a dataset containing the course records for each year for males and females, we were able to convert the `% CR` to individual runners' finish times. An additional dataset used contained all dates of the marathons.
+The fastest finishing time at each age for male and female runners was compared with the course record time, measured as a percent of the course record for that runner’s sex (`% CR` or % CR). The original dataset did not provide runners' actual finish times, but only their % CR. Using a dataset containing the course records for each year for males and females, we were able to convert the %CR to individual runners' finish times. An additional dataset used contained all dates of the marathons.
 
 The source for the dataset is not clear from the materials provided. Here, we assume that the data sources are similar to those cited in Dr. Matthew Ely’s 2007 study, specifically: hourly weather data from the Air Force Combat Climatology Center and marathon race results from the public domain [@ely2007impact]. Notably, the precise geography for which weather data is collected is also not indicated, which introduces potential bias. This issue also exists with AQI data and is discussed in detail below. 
 
@@ -91,50 +91,50 @@ The source for the dataset is not clear from the materials provided. Here, we as
 N/A
 :::
 
-Environmental condition variables follow. The temperature data, measured in Celsius, includes dry bulb temperature (`Td, C`); wet bulb temperature, which takes humidity into account (`Tw, C`); black globe temperature, which takes solar radiation into account (`Tg, C`); and Wet Bulb Globe Temperature (`WBGT`), which is a weighted average of Td, Tw, and Tg. The dataset also includes percent relative humidity (`% RH`); solar radiation in Watts per meter squared (`SR W/m2`); dew point in Celsius (`DP`); and wind speed in Km/hr (`Wind`). As noted above, the core dataset includes `Wind` speed without an indication of wind direction. As a result, we assume that higher winds make running more difficult, without respect to the direction of either the wind or the runner. The data also includes flags (`Flag`) of different colors depending on the `WBGT` and risk of heat illness: white (`WBGT` <10 C); green (`WBGT` 10-18 C); yellow (`WBGT` >18-23 C); red (`WBGT` >23-28 C); and black (`WBGT` >28 C). In Dr. Ely’s preliminary analysis of these data, races were initially divided into quintiles based on WBGT, after which regression analyses were performed to model finishing time by age, gender, and WBGT. Here, we take an approach allowing for analysis of temperature in its continuous form.
+Environmental condition variables follow. The temperature data, measured in Celsius, includes dry bulb temperature (`Td, C`); wet bulb temperature, which takes humidity into account (`Tw, C`); black globe temperature, which takes solar radiation into account (`Tg, C`); and Wet Bulb Globe Temperature (`WBGT`), which is a weighted average of Td, Tw, and Tg. The dataset also includes percent relative humidity (`% RH`); solar radiation in Watts per meter squared (`SR W/m2`); dew point in Celsius (`DP`); and wind speed in Km/hr (`Wind`). As noted above, the core dataset includes `Wind` speed without an indication of wind direction. As a result, we assume that higher winds make running more difficult, without respect to the direction of either the wind or the runner. The data also includes flags (`Flag`) of different colors depending on the `WBGT` and risk of heat illness: white (`WBGT` <10 C); green (`WBGT` 10-18 C); yellow (`WBGT` >18-23 C); red (`WBGT` >23-28 C); and black (`WBGT` >28 C). In Dr. Ely’s preliminary analysis of these data, races were initially divided into quintiles based on WBGT, after which regression analyses were performed to model finishing time by age, gender, and WBGT [@ely2024presentation]. Here, we take an approach allowing for analysis of temperature in its continuous form.
 
 :::{.content-hidden}
 *TODO*
-[] Cite Dr. Ely preliminary paper in paragraph above if possible
+[x] Cite Dr. Ely preliminary paper in paragraph above if possible
 
 ***Reflection***
 Proper citations are critical for trustworthy research.
 :::
 
 
-Dr. Ely’s analysis also did not include air quality and noted air quality as a future direction, stating that previous work indicated that air quality may affect women more than men. We use air quality data from the `RAQSAPI` library in R to fetch air quality index (AQI) data for marathon days. The source of the data used in this package is the EPA’s Air Quality System (AQS) Data Mart API v2 Air Quality System interface, containing every measured value collected by the EPA via the national ambient air monitoring program and aggregate values. We retrieve seven separate parameters from AQS from which `AQI` is estimated: PM2.5 Local Conditions; PM10 Total 0-10 um STP (standard temperature and pressure); Acceptable PM2.5 AQI & Speciation Mass; Ozone; Carbon Monoxide (CO), Nitrogen Dioxide (NO2), and Sulfur Dioxide (SO2). Units are omitted because in the AQI dataset these different parameters are themselves used to estimate a single value of `AQI`, which is a unitless measure of air quality.
+Dr. Ely’s analysis also did not include air quality and noted air quality as a future direction, stating that previous work indicated that air quality may affect women more than men. We use air quality data from the `RAQSAPI` library in R to fetch air quality index (`AQI` or AQI) data for marathon days [@RAQSAPI]. The source of the data used in this package is the EPA’s Air Quality System (AQS) Data Mart API v2 Air Quality System interface, containing every measured value collected by the EPA via the national ambient air monitoring program and aggregate values. We retrieve seven separate parameters from AQS from which AQI is estimated: PM2.5 Local Conditions; PM10 Total 0-10 um STP (standard temperature and pressure); Acceptable PM2.5 AQI & Speciation Mass; Ozone; Carbon Monoxide (CO), Nitrogen Dioxide (NO2), and Sulfur Dioxide (SO2) [@EPA2024AQI]. Units are omitted because in the AQI dataset these different parameters are themselves used to estimate a single value of AQI, which is a unitless measure of air quality.
 
 :::{.content-hidden}
 *TODO*
-[] Cite R package for RAQSAPI in paragraph above
+[x] Cite R package for RAQSAPI in paragraph above
 
 ***Reflection***
 Proper citations are critical for trustworthy research.
 :::
 
-We note two major limitations in our use of air quality data: geographic area inaccuracy and effects of aggregation. First, for geography, all marathons cover large geographic areas, but some routes loop back towards their origin. (Chicago and Twin Cities Marathons are closer to loops; Boston, New York City, and Grandma’s Marathons are more linear.) Notably, in Dr. Ely's 2007 paper, it states that the specific years of marathons used were chosen to ensure that none of the courses changed within the study period; as discussed above, we do not know the source of our current data, but assume that the courses remained the same throughout the period at issue, as with the 2007 paper. Each of the marathons also run through downtown areas. Air quality is likely to differ significantly over the course of a race based on proximity to highways, airports, etc. 
+We note two major limitations in our use of air quality data: geographic area inaccuracy and effects of aggregation. First, for geography, all marathons cover large geographic areas, but some routes loop back towards their origin. (Chicago and Twin Cities Marathons are closer to loops; Boston, New York City, and Grandma’s Marathons are more linear.) Notably, in Dr. Ely's 2007 paper, it states that the specific years of marathons used were chosen to ensure that none of the courses changed within the study period [@ely2007impact]; as discussed above, we do not know the source of our current data, but assume that the courses remained the same throughout the period at issue, as with the 2007 paper. Each of the marathons also run through downtown areas. Air quality is likely to differ significantly over the course of a race based on proximity to highways, airports, etc. 
 
 
 
 Data extracted from the AQS uses the core based statistical area (CBSA), a larger geographical area than the marathon routes, incorporating suburban and exurban areas, which could lead to an underestimate of the AQI. A related limitation is that the AQS data are averaged over stations within the given CBSA because we do not know which stations are close to the marathon route, which is a potential area of refinement for future studies. This general note on geographic precision also applies to the weather variables present in the core marathon dataset, as noted above.  
 
 
-Turning to aggregation, data extracted from the AQS retrieves the seven parameters from which AQI is estimated, discussed above (PM2.5 Local Conditions, etc.). We average the seven parameters, but the effects of these parameters on cardiorespiratory performance differ. Averaging them may thus underestimate the effect of a particular type of pollution on performance. However, we observe missingness in the AQS dataset for some individual parameter types by race and year. Therefore aggregation across parameters reduces the impact of missing data compared to using just one parameter.
+Turning to aggregation, data extracted from the AQS retrieves the seven parameters from which AQI is estimated [@EPA2024AQI], discussed above (PM2.5 Local Conditions, etc.). We average the seven parameters, but the effects of these parameters on cardiorespiratory performance differ. Averaging them may thus underestimate the effect of a particular type of pollution on performance. However, we observe missingness in the AQS dataset for some individual parameter types by race and year. Therefore aggregation across parameters reduces the impact of missing data compared to using just one parameter.
 
 :::{.content-hidden}
 *TODO*
-[x] Alter AQI handling as noted in paragraph above. We add to the inital AQI dataset three new variables, carbon monoxide (CO), nitrogen dioxide (NO2), and sulfer dioxide (SO2)
+[x] Alter AQI handling as noted in paragraph above. We add to the initial AQI dataset three new variables, carbon monoxide (CO), nitrogen dioxide (NO2), and sulfer dioxide (SO2)
 [x] Fix code to reflect new handling of AQI variables
-[] For updated aggregation cite AQI formula as the reason we grab the new parameters: https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf
+[x] For updated aggregation cite AQI formula as the reason we grab the new parameters: https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf    
 
 ***Reflection***
 Different types of pollutants have different biological effects, so it is inaccurate to average across all types of air pollution. We do still aggregate the two PM2.5 AQI measures, but all other are left separate. Averaging all four together could obfuscate the effect of a single component, if that single competent does have a significant impact but the others do not. 
 :::
 
 
-When we separated out the AQI variables into their respective component parts we noticed an issue: there is a great deal of missing data for specific AQI variables for a given marathon event in a given year. This was not an issue in the previous strategy because there is at least one AQI value available for each race in each year. Therefore rather than split out the separate AQI variables, we opt to aggregate more AQI variables. Each row of the AQS dataset includes a date, station, parameter in the form of pollutant type sampled, duration of sampling, and the `AQI` value from that sample. Within one date and sometimes within one station, we aggregate dozens of estimates across the parameters and times.
+When we separated out the AQI variables into their respective component parts we noticed an issue: there is a great deal of missing data for specific AQI variables for a given marathon event in a given year. This was not an issue in the previous strategy because there is at least one AQI value available for each race in each year. Therefore rather than split out the separate AQI variables, we opt to aggregate more AQI variables. Each row of the AQS dataset includes a date, station, parameter in the form of pollutant type sampled, duration of sampling, and the AQI value from that sample. Within one date and sometimes within one station, we aggregate dozens of estimates across the parameters and times.
 
-Additional limitations applicable to both the air quality data and Dr. Ely’s environmental data follow. Because the Boston and Grandma's Marathons are run in April and June, while the others are run in October and November, different races had different environmental conditions, including `AQI`. `AQI` is typically much lower at night and in the morning, due to fluctuations in industrial and automotive activity, but `AQI` estimates are aggregated over the whole day. (We note that the AQS data provide a sample's duration but not the time the sample began to be taken.) And weather conditions change over the course of the day, with temperature typically lower in the morning. Currently, all five marathons start between 7:30 a.m. and 9:40 a.m.; we assume that this was the case during the period of time contained within the dataset. Runners also start the race at different times, with elite runners beginning earlier, and individual runners may take more or less time to complete the course. Individuals released later or spending more time running will likely experience different `AQI` and weather conditions than those released earlier and completing faster.
+Additional limitations applicable to both the air quality data and Dr. Ely’s environmental data follow. Because the Boston and Grandma's Marathons are run in April and June, while the others are run in October and November, different races had different environmental conditions, including AQI. AQI is typically much lower at night and in the morning, due to fluctuations in industrial and automotive activity, but AQI estimates are aggregated over the whole day. (We note that the AQS data provide a sample's duration but not the time the sample began to be taken.) And weather conditions change over the course of the day, with temperature typically lower in the morning. Currently, all five marathons start between 7:30 a.m. and 9:40 a.m.; we assume that this was the case during the period of time contained within the dataset. Runners also start the race at different times, with elite runners beginning earlier, and individual runners may take more or less time to complete the course. Individuals released later or spending more time running will likely experience different AQI and weather conditions than those released earlier and completing faster.
 
 
 
@@ -452,14 +452,14 @@ data <- data %>%
 ```
 
 
-First, we further prepare the dataset by generating a variable which quantized `Age` into `Age Group` (0-17, 18-24, 25-34, 35-44, 45-59, 60-69, 70+). For the purposes of consistency in our sample, the 2013 running of the Boston Marathon is removed, as a terrorist attack occurred during the running of the marathon, which likely affected the time of those finishing subsequent to the attack.
+First, we further prepare the dataset by generating a variable which quantized `Age` into `Age Group` (0-17, 18-24, 25-34, 35-44, 45-59, 60-69, 70+). We aggregated  U.S.A. Track & Field's 5-year age groups into larger groups to facilitate readable visualizations [@runnersworld2008]. We aggregate them so that ages 25-34 are in the same group, rather than as 20-29 and 30-39, given that peak marathon performance is known to generally occur between ages 25 and 35 [@trappe2007marathon]. For the purposes of consistency in our sample, the 2013 running of the Boston Marathon is removed, as a terrorist attack occurred during the running of the marathon, which likely affected the time of those finishing subsequent to the attack.
 
 :::{.content-hidden}
 *TODO*
-[] Note how age groups were determined 
-[] To refine and add to paragraph above: Began by using USATF 5 year age groups and aggregated them to larger groups to facilitate readable visualizations (cite https://www.runnersworld.com/races-places/a20794726/age-and-weight-groups-com/). Note that we aggregate them in such a way that ages 25-34 are in the same group rather than splitting age 20-29 and 30-39 as peak marathon performance is known to generally occur between ages 25 and 35 (cite https://pubmed.ncbi.nlm.nih.gov/17465594/).
+[x] Note how age groups were determined 
+[x] To refine and add to paragraph above: Began by using USATF 5 year age groups and aggregated them to larger groups to facilitate readable visualizations (cite https://www.runnersworld.com/races-places/a20794726/age-and-weight-groups-com/). Note that we aggregate them in such a way that ages 25-34 are in the same group rather than splitting age 20-29 and 30-39 as peak marathon performance is known to generally occur between ages 25 and 35 (cite https://pubmed.ncbi.nlm.nih.gov/17465594/).
 
-[] Add citations noted above to references.bib and correctly cite in Quarto
+[x] Add citations noted above to references.bib and correctly cite in Quarto
 
 
 ***Reflection***
@@ -1002,7 +1002,7 @@ summary_table(data[,c(-5,-7:-20)], stratify_var = "Race") %>%
 
 ```
 
-Full individual variable details are omitted, data is available in [@tbl-2a] and [@tbl-2b]. The New York City Marathon is noticeably the oldest, which could introduce bias ([-@tbl-2a]). Grandma's Marathon, the only race in the summer, had significantly worse `Flag` conditions and warmer temperatures. Chicago had the worst air quality. These are not all of the differences between races ([-@tbl-2b]). As our above analysis indicates, these samples are heterogeneous, in many ways more different than they are alike.
+Full individual variable details are omitted, data is available in [@tbl-2a] and [@tbl-2b]. The New York City Marathon is noticeably the oldest, which could introduce bias ([-@tbl-2a]). Grandma's Marathon, the only race in the summer, had significantly worse flag conditions and warmer temperatures. Chicago had the worst air quality. These are not all of the differences between races ([-@tbl-2b]). As our above analysis indicates, these samples are heterogeneous, in many ways more different than they are alike.
 
 
 ```{r table 2b}
@@ -1046,7 +1046,7 @@ summary_table(data_by_race[-2], stratify_var = "Race") %>%
 
 
 
-We next examine variables by levels of `Sex` (table omitted for space). Student's T-test was used for continuous variables and the Chi-Square test was used for categorical variables. No Bonferroni correction was applied because there are only two groups. There were no statistically significant differences across variables by `Sex`, with the exception of `Age`. Men were statistically significantly older, with a mean `Age` of 47.8 years compared to a mean `Age` of 45.0 years for women.
+We next examine variables by levels of `Sex` (table omitted for space). Student's T-test was used for continuous variables and the Chi-Square test was used for categorical variables. No Bonferroni correction was applied because there are only two groups. There were no statistically significant differences across variables by `Sex`, with the exception of `Age`. Men were statistically significantly older, with a mean age of 47.8 years compared to a mean age of 45.0 years for women.
 
 ```{r table X, echo = F, eval = F}
 # Table X
@@ -1073,7 +1073,7 @@ summary_table(data[,c(-5,-17:-20)], stratify_var = "Sex") %>%
 
 ```
 
-Next, we consider differences in variables by `Age Group` (table omitted for space). The Kruskal-Wallis test was performed for continued variables, the Chi-Square test was used for categorical variables, and Bonferroni correction for the P-values was applied for all. There are significant differences by `Age Group` across all variables other than `Year`, `Flag` and `AQI`. Between ages 18-69 years, the five marathons are generally comparable to each other, it is outside this range that large differences occur. The New York City Marathon has proportionally many more individuals age 70 or older (40.3% of the age 70+ sample), which is supported by the analysis in @tbl-2a indicating that it has the oldest average age. Interestingly, in the age 70 or older group there are many more men than women (70.0% men and 30.0% women compared to 52.8% male and 47.2% female in the total sample), a potential source of bias. Boston has the fewest individuals under 18 (6.2% of the age 0-17 sample), followed by New York City (9.8% of the age 0-17 sample). Twin Cities and Grandma's Marathons have notably higher numbers of individuals under 18 (24.5% and 30.3% of the age 0-17 sample). The significant differences in environmental variables ([-@tbl-2b]) are likely caused by Grandma's Marathon being over-sampled for individuals under 18 years of age and taking place during the summer, and thus having the highest temperatures, as discussed above. It is notable that different age groups do not experience significantly different levels of `AQI`.
+Next, we consider differences in variables by `Age Group` (table omitted for space). The Kruskal-Wallis test was performed for continued variables, the Chi-Square test was used for categorical variables, and Bonferroni correction for the P-values was applied for all. There are significant differences by `Age Group` across all variables other than `Year`, `Flag` and `AQI`. Between ages 18-69 years, the five marathons are generally comparable to each other, it is outside this range that large differences occur. The New York City Marathon has proportionally many more individuals age 70 or older (40.3% of the age 70+ sample), which is supported by the analysis in @tbl-2a indicating that it has the oldest average age. Interestingly, in the age 70 or older group there are many more men than women (70.0% men and 30.0% women compared to 52.8% male and 47.2% female in the total sample), a potential source of bias. Boston has the fewest individuals under 18 (6.2% of the age 0-17 sample), followed by New York City (9.8% of the age 0-17 sample). Twin Cities and Grandma's Marathons have notably higher numbers of individuals under 18 (24.5% and 30.3% of the age 0-17 sample). The significant differences in environmental variables ([-@tbl-2b]) are likely caused by Grandma's Marathon being over-sampled for individuals under 18 years of age and taking place during the summer, and thus having the highest temperatures, as discussed above. It is notable that different age groups do not experience significantly different levels of AQI.
 
 
 ```{r table Y, echo = F, eval = F}
@@ -1179,10 +1179,11 @@ Variance inflation factor (VIF) is calculated for all variables. Initial checks 
 ### Aim 1: Examine Effects of Increasing Age on Marathon Performance in Men and Women
 
 :::{.content-hidden}
-*TODO*
+*TODO* **Aim 1**
 [x] Expand model explanations
 [x] Add tables for model results
 [x] Code: replace figure 4 with normalized difference in % CR by Age with facet by race
+[x] Make sure variable names are consistent
 
 ***Reflection***
 
@@ -1324,7 +1325,7 @@ aim1m1 <- lmer(Time ~ CR + Year + Sex + Age + I(Age^2)
 ```
 
 
-A scatter plots of `% CR` vs. `Age`, with different colors for `Sex` as well as scatter plots of normalized difference in % CR by sex for each race are included for interpretation. There is an evident U-shaped, curvilinear, relationship between `Age` and `% CR` which will inform modeling decisions (i.e. a polynomial term for age will be included in all models). Based on the visualizations we see that the curvilinear relationship between age and performance is likely more pronounced for women than men (women accelerate towards optimal finishing time faster as they approach optimal age, and decelerate faster as they age). It is also notable from the above that the gap between men and women appears to increase substantially around age 50, before gradually narrowing again as can been seen in the figures above. For correlations, we refer to the correlation matrix [@fig-corr] and note that for bivariate correlation, there is no correlation between `Sex` and `% CR` (Correlation = 0.00). This is a consequence of marathon course records, and therefore `% CR`, being categorized separately for males and females. This does not preclude a more complex relationship between `Sex`, `Age`, and `% CR` which we will explore below. We observe a strong correlation between `Age` and `% CR` (Correlation = 0.70) which is supported by physiological theory. 
+A scatter plots of % CR vs. age, with different colors for sex, as well as scatter plots of normalized difference in % CR by sex for each race are included for interpretation. There is an evident U-shaped, curvilinear, relationship between age and % CR, which will inform modeling decisions (i.e., a polynomial term for age will be included in all models). Based on the visualizations, we see that the curvilinear relationship between age and performance is likely more pronounced for women than men, with women accelerating towards optimal finishing time faster as they approach optimal age, and decelerating faster as they age. It is also notable from the above that the gap between men and women appears to increase substantially around age 50, before gradually narrowing again as can been seen in the figures above. For correlations, we refer to the correlation matrix [@fig-corr] and note that for bivariate correlation, there is no correlation between sex and % CR (Correlation = 0.00). This is a consequence of marathon course records, and therefore `% CR`, being categorized separately for males and females. This does not preclude a more complex relationship between sex, age, and % CR, which we will explore below. We observe a strong correlation between age and % CR (Correlation = 0.70), which is supported by physiological theory. 
  
 We conduct preliminary linear mixed effects regression modeling to aid in answering this aim. Note that we use `Time` as our response variable rather than `% CR` because the latter is computed separately by gender, which could bias our results when including `Sex` and associated interaction terms in the model. To accurately model the complex relationship between gender and age we include quadratic terms for `Age` and both the linear interaction of `Sex` and `Age` as well as the interaction between `Sex` and quadratic `Age`. We include a random slope for `Race` and include as controls `CR` and `Year` to adjust for the differential difficulty between race courses and across years.
 
@@ -1419,16 +1420,17 @@ General interpretation of the results is as follows: our model indicates that pe
 ### Aim 2: Explore the Impact of Environmental Conditions on Marathon Performance, and Whether the Impact Differs Across Age and Gender
 
 :::{.content-hidden}
-*TODO*
+*TODO* **Aim 2**
 [x] Expand model explanations
 [x] Add tables for model results
 [x] Change plots to use normalized difference in % CR for readability
+[x] Make sure variable names are consistent
 
 ***Reflection***
 TBD
 :::
 
-Scatter plots were created to compare the normalized difference of % CR against environmental variables. We see that there are relationships between the environmental variables and normalized difference in the percent of course record ([-@fig-env]). We observe marginal or subtle differences in the patter of effect for these variables between men and women. The relationships are generally intuitive such as performance declining with increasing WBGT. However, other relationships are counterintuitive and non-linear, including relative humidity, AQI, and wind. We observe weak correlations between weather variables and performance [@fig-corr]. An additional plot of `% CR` by `Age` stratified by `Flag` is generated ([-@fig-flag]). We note that this plot indicates a possible relationship between performance and `Flag` (and therefore likely a relationship between performance and `WBGT`). 
+Scatter plots were created to compare the normalized difference of % CR against environmental variables. We see that there are relationships between the environmental variables and normalized difference in the percent of course record ([-@fig-env]). We observe marginal or subtle differences in the patter of effect for these variables between men and women. The relationships are generally intuitive such as performance declining with increasing WBGT. However, other relationships are counterintuitive and non-linear, including relative humidity, AQI, and wind. We observe weak correlations between weather variables and performance [@fig-corr]. An additional plot of % CR by age, stratified by flag, is generated ([-@fig-flag]). We note that this plot indicates a possible relationship between performance and flag (and therefore likely a relationship between performance and WBGT). 
 
 
 \vspace{-1mm} 
@@ -1548,11 +1550,11 @@ aim2m2 <- lmer(Time ~ CR + Year + Sex + Age + I(Age^2) + Sex * Age + Sex * I(Age
 
 ```
 
-As above, we conduct preliminary linear mixed effects regression modeling to aid in answering this aim. We produce two models, one with interactions between environmental variables and `Age` as well as between environmental variable and `Sex`, and one without. General interpretation of the results is as follows. For the model without interactions (Table 6), we found that environmental conditions significantly impact marathon performance. Higher `WBGT` and stronger `Wind` slow runners down (32.847 seconds per `WBGT` unit, p<0.001 and 11.755 seconds per `Wind` unit, p=0.005, respectively). Surprisingly, higher humidity is associated with slightly faster times (-4.593 seconds per 1% increase in `% RH`, p<0.001); we note that the relationship between `% RH` and performance is likely U-shaped, which our linear model does not account for. Solar radiation shows no significant effect. The age and sex effects remain similar to our first model, with significant quadratic age terms and sex interactions.
+As above, we conduct preliminary linear mixed effects regression modeling to aid in answering this aim. We produce two models, one with interactions between environmental variables and `Age` as well as between environmental variable and `Sex`, and one without. General interpretation of the results is as follows. For the model without interactions (Table 6), we found that environmental conditions significantly impact marathon performance. Higher WBGT and stronger wind slow runners down (32.847 seconds per `WBGT` unit, p<0.001 and 11.755 seconds per `Wind` unit, p=0.005, respectively). Surprisingly, higher humidity is associated with slightly faster times (-4.593 seconds per 1% increase in `% RH`, p<0.001); we note that the relationship between relative humidity and performance is likely U-shaped, which our linear model does not account for. Solar radiation shows no significant effect. The age and sex effects remain similar to our first model, with significant quadratic age terms and sex interactions.
 
 
 
-To produce the second model (Table 7), we add interaction terms for all environmental variables with both `Age` and `Sex`. Environmental impacts on marathon performance differ significantly across `Age` and `Sex`. `WBGT` has a more pronounced effect on women and older runners (0.486 seconds more per year of `Age` per `WBGT` unit, p=0.009), while men are significantly less affected by `WBGT` (-16.615 seconds per unit compared to women, p=0.014). Air quality shows complex interactions --- while better air quality is generally associated with slower times (-11.271 seconds per AQI unit, p=0.009), this effect becomes more pronounced with age (0.208 seconds per year per AQI unit, p=0.010). Higher humidity benefits older runners more (-0.131 seconds per year per 1% increase in `% RH`, p=0.022). Wind drops out as a significant predictor in this more complex model, suggesting its effects may be captured by other variables or interactions.
+To produce the second model (Table 7), we add interaction terms for all environmental variables with both `Age` and `Sex`. Environmental impacts on marathon performance differ significantly across age and sex. WBGT has a more pronounced effect on women and older runners (0.486 seconds more per year of `Age` per `WBGT` unit, p=0.009), while men are significantly less affected by WBGT (-16.615 seconds per unit compared to women, p=0.014). Air quality shows complex interactions --- while better air quality is generally associated with slower times (-11.271 seconds per AQI unit, p=0.009), this effect becomes more pronounced with age (0.208 seconds per year per AQI unit, p=0.010). Higher humidity benefits older runners more (-0.131 seconds per year per 1% increase in `% RH`, p=0.022). Wind drops out as a significant predictor in this more complex model, suggesting its effects may be captured by other variables or interactions.
 
 
 
@@ -1729,7 +1731,7 @@ ggplot(pred_data_m2_rh, aes(x = `% RH`, y = Time_hat, color = Sex, linetype = fa
 ### Aim 3: Identify the Weather Parameters that Have the Largest Impact on Marathon Performance
 
 :::{.content-hidden}
-*TODO*
+*TODO* **Aim 3**
 [x] Expand permutation importance explanation
 [x] Add plot for permutation results
 
@@ -1789,15 +1791,15 @@ First we observe based on @fig-corr that there are extremely weak correlations b
 
 ### 5.1 Summary of Findings
 
-The previous preliminary analysis on this data, performed by Dr. Ely, yielded a U-shaped relationship between age and performance, which was affected by gender, and found that `WBGT` affected `% CR`, impacted by both age and gender. Aim 1 analysis indicates marathon performance follows a U-shaped age curve, more pronounced for women. Women peak earlier (35.4 years) than men (37.1 years) and decline faster post-peak (7.06 vs 6.22 seconds/year squared). This leads to a widening gender performance gap in older ages, despite women's faster improvement in younger years. These findings emphasize the need for age and sex-specific training approaches.
+The previous preliminary analysis on this data, performed by Dr. Ely, yielded a U-shaped relationship between age and performance, which was affected by gender, and found that WBGT affected % CR, impacted by both age and gender. Aim 1 analysis indicates marathon performance follows a U-shaped age curve, which is more pronounced for women. Women peak earlier (35.4 years) than men (37.1 years) and decline faster post-peak (7.06 vs 6.22 seconds/year squared). This leads to a widening gender performance gap in older ages, despite women's faster improvement in younger years. These findings emphasize the need for age and sex-specific training approaches.
 
-Aim 2 analysis indicates environmental conditions impact marathon performance differently across age and gender. Higher `WBGT` and wind slow runners, with `WBGT` affecting women and older runners more. Men are less impacted by `WBGT` but more by poor air quality. Higher humidity unexpectedly benefits older runners. Wind affects all equally. These results highlight the importance of considering both environmental and individual factors in marathon preparation. Aim 3 analysis indicates `WBGT` is the most crucial environmental factor for marathon performance, significantly outweighing other environmental variables. However, runner characteristics like `Age` and `Sex` remain far more influential than any environmental factor. This suggests that while race organizers should prioritize `WBGT` considerations, individual attributes are still the primary determinants of marathon performance. Results are discussed in depth above.
+Aim 2 analysis indicates environmental conditions impact marathon performance differently across age and gender. Higher WBGT and wind slow runners, with WBGT affecting women and older runners more. Men are less impacted by WBGT but more by poor air quality. Higher humidity unexpectedly benefits older runners. Wind affects all equally. These results highlight the importance of considering both environmental and individual factors in marathon preparation. Aim 3 analysis indicates WBGT is the most crucial environmental factor for marathon performance, significantly outweighing other environmental variables. However, runner characteristics like age and sex remain far more influential than any environmental factor. This suggests that while race organizers should prioritize WBGT considerations, individual attributes are still the primary determinants of marathon performance. Results are discussed in depth above.
 
 
-### 5.2 Limitations
+### 5.2 Limitations & Future Aims
 
 :::{.content-hidden}
-*TODO*
+*TODO* **Limitation**
 [x] Add why we don't stratify by sex in limitations and reflect 
 
 ***Reflection***
@@ -1805,11 +1807,12 @@ Upon reflection, I feel my decision not to stratify the models by sex was method
 
 :::
 
-Limitations include the following. We only have the top finisher at each age, which may produce selection bias for high performers. Data is limited for the youngest and oldest runners, with many fewer women than men over 70 years of age; and New York City and Grandma's Marathons have proportionally more 70+ year olds and 0-18 year olds, respectively, than we would expect based on their share of the total sample. Additionally, as discussed, the very slow times to finish included in the dataset could bias our conclusions. 
+Limitations include the following. We only have the top finisher at each age, which may produce selection bias for high performers. Data is limited for the youngest and oldest runners, with many fewer women than men over 70 years of age; and New York City and Grandma's Marathons have proportionally more 70+ year-olds and 0-18 year-olds, respectively, than we would expect based on their share of the total sample. Additionally, as discussed, the very slow times to finish included in the dataset could bias our conclusions. 
 
-Although we know that environmental data originates from the same source as those used in Dr. Matthew Ely’s 2007 analysis, we do not know the geography for which weather data was collected. Moreover, as noted, it is unclear why `Flag` and  `WBGT` have opposite correlation directions with `Wind`. As discussed above, races differ from each other in important ways. `Race` is moderately correlated with many environmental variables, which is a potential limitation in our study, because the races are heterogeneous and conducted under different environmental conditions (discussed in detail above). Moreover, as noted, overly general geographies and overly general time aggregation are limitations for both environmental conditions and AQI analyses, and aggregation over air quality parameters is a further limitation for AQI analysis. Weather conditions may affect an average runner more or differently. As is also noted above, experiences of weather conditions and AQI may differ for later starters and those who spend longer on the course, including because temperature and AQI generally increase through the day.
+Although we know that environmental data originates from the same source as those used in Dr. Matthew Ely’s 2007 analysis, we do not know the geography for which weather data was collected. Moreover, as noted, it is unclear why `Flag` and  `WBGT` have opposite correlation directions with `Wind`, which is a potential question for future study. As discussed above, races differ from each other in important ways. `Race` is moderately correlated with many environmental variables, which is a potential limitation in our study, because the races are heterogeneous and conducted under different environmental conditions (discussed in detail above). Moreover, as noted, overly general geographies and overly general time aggregation are limitations for both environmental conditions and AQI analyses, and aggregation over air quality parameters is a further limitation for AQI analysis. A potential area for future work could be determining which AQS stations are close to the marathon routes. An additional future direction could be to keep AQI parameters separate and address missing data. Weather conditions may affect an average runner more or differently. As is also noted above, experiences of weather conditions and AQI may differ for later starters and those who spend longer on the course, including because temperature and AQI generally increase through the day.
 
-We also omit (as discussed in detail above) model diagnostics as outside of scope for this report. Additionally, we do not engage in through variable selection procedure. We also do not explore non-linear models, which may be superior to linear models in this case given the complex non-linear relationships between performance, `Age`, `Sex`, and the environmental variables. We also do not explore polynomial terms for environmental variables (although their non-linear relationship with performance is clear from plotting), nor do we stratify modeling by sex. Finally, despite the good sample size, this analysis is limited by a lack of cross validation (k-fold or otherwise). These are all weaknesses that should be addressed in future work.
+We also omit (as discussed in detail above) model diagnostics as outside of scope for this report. Additionally, we do not engage in thorough variable selection procedure. We also do not explore non-linear models, which may be superior to linear models in this case given the complex non-linear relationships between performance, age, sex, and the environmental variables. We also do not explore polynomial terms for environmental variables (although their non-linear relationship with performance is clear from plotting), nor do we stratify modeling by sex. Finally, despite the good sample size, this analysis is limited by a lack of cross validation (k-fold or otherwise). These are all weaknesses that should be addressed in future work.
+
 
 ---
 
