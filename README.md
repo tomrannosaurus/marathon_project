@@ -7,7 +7,7 @@ Female and male runners of all ages test the limits of their endurance in marath
 
 ## Methods
 
-This report examines marathon performance under different environmental conditions by female and male runners of different ages. Using the fastest single-age finishing time for male and female runners in five major marathons run annually over approximately two decades, performance is measured as the runner’s finishing time as a percent of the prior course record for his or her sex. The report investigates the relationship between this metric of performance, air quality index (AQI), and indices of weather to include Wet Bulb Globe Temperature, relative humidity, wind, and dew point. 
+This report examines marathon performance under different environmental conditions by female and male runners of different ages. Using the fastest single-age finishing time for male and female runners in five major marathons run annually over approximately two decades, performance is measured as the runner’s finishing time as a percent of the prior course record for his or her sex. The report investigates the relationship between this metric of performance, air quality index (AQI) measured as an average of seven parameters, and indices of weather to include Wet Bulb Globe Temperature, relative humidity, wind, and dew point. We used normalized difference in %CR for plotting in order to more clearly illustrate the differences in performance across age, sex, and environmental covariates. 
 
 ## Results
 
