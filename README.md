@@ -37,6 +37,8 @@ Key Findings:
    - reshape2: 1.4.4
    - moments: 0.14.1
    - vcd: 1.4-12
+	- broom.mixed 0.2.94
+	- lemon 0.5.0
 
 ## Files
 
