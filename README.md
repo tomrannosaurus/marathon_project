@@ -11,6 +11,10 @@ This report examines marathon performance under different environmental conditio
 
 ## Results
 
+![fig5](fig5.png)
+
+![fig7](fig7.png)
+
 Key Findings:
 - Marathon performance demonstrates a U-shaped relationship with age, more pronounced in female runners.
 - Increased WBGT and wind speed generally slow down runners, with older and female runners experiencing greater impacts.
